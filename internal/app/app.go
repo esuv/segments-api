@@ -2,49 +2,51 @@ package app
 
 import (
 	"fmt"
+	"github.com/labstack/echo/v4"
+	"log/slog"
 	"segments-api/internal/config"
-	"strings"
+	"segments-api/internal/controller/rest"
+	"segments-api/internal/logger"
+	"segments-api/internal/logger/sl"
+	"segments-api/internal/repository"
+	"segments-api/internal/service"
+	"segments-api/pkg/database"
 )
 
 func Run(configDir string) {
-	_ = config.MustLoad(configDir)
+	//Configuration
+	cfg := config.MustLoad(configDir)
 
-	str := "12 345 df"
-	strings.TrimSuffix()
-	fmt.Println(strings.ReplaceAll(str, " ", ""))
+	//Init logger
+	log := logger.SetupLogger(config.Env())
 
-	arr := []int{124, 324, 345, -1, -234, 0}
-	fmt.Println(Invert(arr))
+	//Init repository layer
+	conn := database.NewPostgresConnection(cfg.Postgres)
+	segmentRepository := repository.New(log, conn)
+
+	//Init services
+	segmentService := service.New(log, segmentRepository)
+
+	//Init handlers
+	route := rest.New(segmentService)
+
+	//Init server
+	initServer(route, cfg, log)
+
+	// Graceful Shutdown
 
 }
 
-func Invert(arr []int) []int {
-	result := make([]int, len(arr))
-	copy(result, arr)
+func initServer(route rest.SegmentRoute, cfg *config.Config, log *slog.Logger) {
+	srv := echo.New()
 
-	for i, elem := range arr {
-		arr[i] = elem * -1
+	srv.POST("/segments", route.Create)
+	srv.DELETE("/segments", route.Delete)
+	srv.POST("/segments/users/:userId", route.AddUser)
+	srv.GET("/segments/users/:userId", route.GetAllByUser)
+
+	err := srv.Start(fmt.Sprintf(":%d", cfg.Http.Port))
+	if err != nil {
+		log.Error("server starting failed", sl.Err(err))
 	}
-
-	return arr
-}
-func CalculateYears(years int) (result [3]int) {
-
-	var catAge, dogAge int
-
-	for i := 1; i <= years; i++ {
-		if i == 1 {
-			catAge = 15
-			dogAge = 15
-		} else if i == 2 {
-			catAge = catAge + 9
-			dogAge = dogAge + 9
-		} else {
-			catAge = catAge + 4
-			dogAge = dogAge + 5
-		}
-	}
-
-	return [3]int{years, catAge, dogAge}
-
 }

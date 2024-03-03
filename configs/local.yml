@@ -1,0 +1,13 @@
+http:
+  port: 8080
+  maxHeaderBytes: 1
+  readTimeout: 5s
+  writeTimeout: 5s
+
+postgres:
+  host: 127.0.0.1
+  port: 5432
+  databaseName: postgres
+  user: postgres
+  password: postgres
+  ssl_mode: disable

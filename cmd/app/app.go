@@ -1,5 +1,9 @@
 package main
 
-func main() {
+import "segments-api/internal/app"
 
+const configsDir = "configs"
+
+func main() {
+	app.Run(configsDir)
 }
