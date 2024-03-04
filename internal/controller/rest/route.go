@@ -1,12 +1,15 @@
 package rest
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+	"segments-api/internal/model/segment"
+)
 
 type SegmentService interface {
 	Create(slug string) (int, error)
 	Delete(slug string) error
 	AddUser(add []string, remove []string, userId int) error
-	GetAllByUser(userID int)
+	GetAllByUser(userID int) ([]segment.Segment, error)
 }
 
 type SegmentRoute struct {
@@ -83,5 +86,11 @@ func (r SegmentRoute) AddUser(ctx echo.Context) error {
 }
 
 func (r SegmentRoute) GetAllByUser(ctx echo.Context) error {
+	segments, err := r.service.GetAllByUser(1)
+	if err != nil {
+		return err
+	}
+	_ = segment.ToDTOs(segments)
+
 	return nil
 }

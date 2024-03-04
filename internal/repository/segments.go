@@ -1,18 +1,25 @@
 package repository
 
 import (
-	"database/sql"
 	"log/slog"
+	"segments-api/internal/model/segment"
+	"segments-api/pkg/database"
 )
 
-type SegmentRepository struct {
+type SegmentRepositoryImpl struct {
+	client database.Client
 	logger *slog.Logger
-	db     *sql.DB
 }
 
-func New(logger *slog.Logger, db *sql.DB) SegmentRepository {
-	return SegmentRepository{
-		logger: logger,
-		db:     db,
-	}
+func New(client database.Client, logger *slog.Logger) *SegmentRepositoryImpl {
+	return &SegmentRepositoryImpl{client: client, logger: logger}
+}
+
+func (r SegmentRepositoryImpl) GetByName(name string) segment.Segment {
+	return segment.Segment{}
+}
+
+func (r SegmentRepositoryImpl) Create(name string) (int, error) {
+	//TODO implement me
+	panic("implement me")
 }

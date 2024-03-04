@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"log/slog"
@@ -21,11 +22,12 @@ func Run(configDir string) {
 	log := logger.SetupLogger(config.Env())
 
 	//Init repository layer
-	conn := database.NewPostgresConnection(cfg.Postgres)
-	segmentRepository := repository.New(log, conn)
+	//conn := database.NewPostgresConnection(cfg.Postgres)
+	conn := database.New(context.TODO(), cfg.Postgres, log)
+	segmentRepository := repository.New(conn, log)
 
 	//Init services
-	segmentService := service.New(log, segmentRepository)
+	segmentService := service.New(segmentRepository, log)
 
 	//Init handlers
 	route := rest.New(segmentService)
