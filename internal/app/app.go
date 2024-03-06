@@ -30,7 +30,7 @@ func Run(configDir string) {
 	segmentService := service.New(segmentRepository, log)
 
 	//Init handlers
-	route := rest.New(segmentService)
+	route := rest.New(segmentService, log)
 
 	//Init server
 	initServer(route, cfg, log)
@@ -44,7 +44,8 @@ func initServer(route rest.SegmentRoute, cfg *config.Config, log *slog.Logger) {
 
 	srv.POST("/segments", route.Create)
 	srv.DELETE("/segments", route.Delete)
-	srv.POST("/segments/users/:userId", route.AddUser)
+	srv.POST("/segments/users", route.AddUser)
+	//srv.POST("/segments/users/:userId", route.AddUser)
 	srv.GET("/segments/users/:userId", route.GetAllByUser)
 
 	err := srv.Start(fmt.Sprintf(":%d", cfg.Http.Port))

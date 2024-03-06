@@ -1,12 +1,15 @@
 package rest
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
+	"log/slog"
+	"net/http"
 	"segments-api/internal/model/segment"
 )
 
 type SegmentService interface {
-	Create(slug string) (int, error)
+	Create(slug string) (segment.Segment, error)
 	Delete(slug string) error
 	AddUser(add []string, remove []string, userId int) error
 	GetAllByUser(userID int) ([]segment.Segment, error)
@@ -14,10 +17,11 @@ type SegmentService interface {
 
 type SegmentRoute struct {
 	service SegmentService
+	log     *slog.Logger
 }
 
-func New(service SegmentService) SegmentRoute {
-	return SegmentRoute{service: service}
+func New(service SegmentService, log *slog.Logger) SegmentRoute {
+	return SegmentRoute{service: service, log: log}
 }
 
 type inputCreateSegment struct {
@@ -32,13 +36,13 @@ func (r SegmentRoute) Create(ctx echo.Context) error {
 		return err
 	}
 
-	if _, err := r.service.Create(inp.Name); err != nil {
-		//TODO return error
-
+	var sgm segment.Segment
+	sgm, err := r.service.Create(inp.Name)
+	if err != nil {
 		return err
 	}
 
-	return nil
+	return ctx.JSON(http.StatusOK, &sgm)
 }
 
 type inputDeleteSegment struct {
@@ -76,13 +80,12 @@ func (r SegmentRoute) AddUser(ctx echo.Context) error {
 		return err
 	}
 
-	if err := r.service.AddUser(inp.AddSegments, inp.DeleteSegments, inp.UserID); err != nil {
-		//TODO return error
-
-		return err
+	err := r.service.AddUser(inp.AddSegments, inp.DeleteSegments, inp.UserID)
+	if err != nil {
+		ctx.Error(err)
+		fmt.Println(err.Error())
 	}
-
-	return nil
+	return err
 }
 
 func (r SegmentRoute) GetAllByUser(ctx echo.Context) error {

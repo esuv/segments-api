@@ -6,8 +6,10 @@ import (
 )
 
 type SegmentRepository interface {
-	GetByName(name string) segment.Segment
-	Create(name string) (int, error)
+	Create(name string) (segment.Segment, error)
+	Delete(name string) error
+	AddUser(add []string, remove []string, userId int) error
+	GetAllByUser(userID int) ([]segment.Segment, error)
 }
 
 type SegmentServiceImpl struct {
@@ -15,20 +17,17 @@ type SegmentServiceImpl struct {
 	log  *slog.Logger
 }
 
-func New(repo SegmentRepository, logger *slog.Logger) *SegmentServiceImpl {
-	return &SegmentServiceImpl{
-		repo: repo,
-		log:  logger,
-	}
+func New(repo SegmentRepository, log *slog.Logger) *SegmentServiceImpl {
+	return &SegmentServiceImpl{repo: repo, log: log}
 }
 
-func (s SegmentServiceImpl) Create(name string) (int, error) {
-	segmentID, err := s.repo.Create(name)
+func (s SegmentServiceImpl) Create(slug string) (segment.Segment, error) {
+	sgm, err := s.repo.Create(slug)
 	if err != nil {
-		return 0, err
+		return segment.Segment{}, err
 	}
 
-	return segmentID, nil
+	return sgm, nil
 }
 
 func (s SegmentServiceImpl) Delete(slug string) error {
@@ -37,8 +36,7 @@ func (s SegmentServiceImpl) Delete(slug string) error {
 }
 
 func (s SegmentServiceImpl) AddUser(add []string, remove []string, userId int) error {
-	//TODO implement me
-	panic("implement me")
+	return s.repo.AddUser(add, remove, userId)
 }
 
 func (s SegmentServiceImpl) GetAllByUser(userID int) ([]segment.Segment, error) {
