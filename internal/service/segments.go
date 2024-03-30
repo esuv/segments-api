@@ -31,8 +31,7 @@ func (s SegmentServiceImpl) Create(slug string) (segment.Segment, error) {
 }
 
 func (s SegmentServiceImpl) Delete(slug string) error {
-	//TODO implement me
-	panic("implement me")
+	return s.repo.Delete(slug)
 }
 
 func (s SegmentServiceImpl) AddUser(add []string, remove []string, userId int) error {
@@ -40,6 +39,5 @@ func (s SegmentServiceImpl) AddUser(add []string, remove []string, userId int) e
 }
 
 func (s SegmentServiceImpl) GetAllByUser(userID int) ([]segment.Segment, error) {
-	//TODO implement me
-	panic("implement me")
+	return s.repo.GetAllByUser(userID)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/swaggo/echo-swagger"
 	"log/slog"
 	"segments-api/internal/config"
 	"segments-api/internal/controller/rest"
@@ -41,6 +42,7 @@ func Run(configDir string) {
 
 func initServer(route rest.SegmentRoute, cfg *config.Config, log *slog.Logger) {
 	srv := echo.New()
+	srv.GET("/swagger/*any", echoSwagger.WrapHandler)
 
 	srv.POST("/segments", route.Create)
 	srv.DELETE("/segments", route.Delete)

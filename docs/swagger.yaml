@@ -1,0 +1,45 @@
+basePath: /
+definitions:
+  dto.SegmentDTO:
+    properties:
+      id:
+        example: 1
+        type: integer
+      segment_name:
+        example: segment 1
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: eo.suvorov@gmail.com
+    name: Evgenii Suvorov
+  description: Segments API server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Segments API
+  version: "1.0"
+paths:
+  /accounts/{id}:
+    get:
+      consumes:
+        - application/json
+      description: get string by ID
+      parameters:
+        - description: Account ID
+          in: path
+          name: id
+          required: true
+          type: integer
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SegmentDTO'
+      summary: Get all segments by User ID
+      tags:
+        - accounts
+swagger: "2.0"

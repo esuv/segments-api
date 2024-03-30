@@ -1,0 +1,67 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Segments API server.",
+    "title": "Segments API",
+    "contact": {
+      "name": "Evgenii Suvorov",
+      "email": "eo.suvorov@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "paths": {
+    "/accounts/{id}": {
+      "get": {
+        "description": "get string by ID",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Get all segments by User ID",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Account ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/dto.SegmentDTO"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dto.SegmentDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "segment_name": {
+          "type": "string",
+          "example": "segment 1"
+        }
+      }
+    }
+  }
+}

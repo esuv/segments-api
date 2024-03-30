@@ -1,6 +1,6 @@
 package segment
 
 type Segment struct {
-	ID   int
-	Name string
+	ID   int    `db:"id"`
+	Name string `db:"name"`
 }

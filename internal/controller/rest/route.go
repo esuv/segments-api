@@ -5,7 +5,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"log/slog"
 	"net/http"
+	"segments-api/internal/logger/sl"
 	"segments-api/internal/model/segment"
+	"strconv"
 )
 
 type SegmentService interface {
@@ -28,6 +30,14 @@ type inputCreateSegment struct {
 	Name string `json:"name"`
 }
 
+// Create godoc
+// @Summary      Create segment
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Router       /segments [post]
 func (r SegmentRoute) Create(ctx echo.Context) error {
 	var inp inputCreateSegment
 	if err := ctx.Bind(&inp); err != nil {
@@ -85,15 +95,36 @@ func (r SegmentRoute) AddUser(ctx echo.Context) error {
 		ctx.Error(err)
 		fmt.Println(err.Error())
 	}
+
 	return err
 }
 
+// GetAllByUser godoc
+// @Summary      Get all segments by User ID
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  dto.SegmentDTO
+// @Router       /segments/users/{id} [get]
 func (r SegmentRoute) GetAllByUser(ctx echo.Context) error {
-	segments, err := r.service.GetAllByUser(1)
+	userID, err := strconv.Atoi(ctx.Param("userId"))
 	if err != nil {
 		return err
 	}
-	_ = segment.ToDTOs(segments)
+
+	segments, err := r.service.GetAllByUser(userID)
+	if err != nil {
+		return err
+	}
+	result := segment.ToDTOs(segments)
+
+	err = ctx.JSON(http.StatusOK, result)
+	if err != nil {
+		r.log.Error("marshalling error", sl.Err(err))
+		return err
+	}
 
 	return nil
 }
