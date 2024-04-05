@@ -14,7 +14,7 @@ RUN set -x \
     && go mod verify
 
 COPY . ./
-RUN go build -o /tmp/app ./cmd/main.go
+RUN go build -o /tmp/app ./cmd/app/main.go
 
 # Image page: <https://hub.docker.com/_/alpine>
 FROM alpine:latest AS runtime

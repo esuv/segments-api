@@ -24,7 +24,7 @@ func Run(configDir string) {
 
 	//Init repository layer
 	//conn := database.NewPostgresConnection(cfg.Postgres)
-	conn := database.New(context.TODO(), cfg.Postgres, log)
+	conn := database.New(context.Background(), cfg.Postgres, log)
 	segmentRepository := repository.New(conn, log)
 
 	//Init services

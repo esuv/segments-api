@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"segments-api/internal/config"
 
@@ -28,7 +29,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	if err := m.Up(); err != nil {
+		if errors.Is(err, migrate.ErrNoChange) {
+			fmt.Println("there are no changes yet, add some new migration to ./migrations directory")
+			return
+		}
+
 		panic(err)
 	}
 }
