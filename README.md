@@ -1,6 +1,9 @@
 <img align="right" width="50%" src="./images/gopher.png">
+<img align="right" width="20%" src="./images/echo-logo.svg">
 
-# Books App
+# Segments API
+
+## Description
 
 Basic application for managing segments
 
