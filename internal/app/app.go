@@ -16,31 +16,35 @@ import (
 )
 
 func Run(configDir string) {
-	//Configuration
+	//configuration
 	cfg := config.MustLoad(configDir)
 
-	//Init logger
+	//init logger
 	log := logger.SetupLogger(config.Env())
 
-	//Init repository layer
+	//postgresql connection
 	//conn := database.NewPostgresConnection(cfg.Postgres)
 	conn := database.New(context.Background(), cfg.Postgres, log)
+
+	//clean architecture: handler -> service -> repository
+
+	//init repository
 	segmentRepository := repository.New(conn, log)
 
-	//Init services
+	//init service
 	segmentService := service.New(segmentRepository, log)
 
-	//Init handlers
+	//init handler
 	route := rest.New(segmentService, log)
 
-	//Init server
-	initServer(route, cfg, log)
+	//run server
+	startServer(route, cfg, log)
 
 	// Graceful Shutdown
 
 }
 
-func initServer(route rest.SegmentRoute, cfg *config.Config, log *slog.Logger) {
+func startServer(route rest.SegmentRoute, cfg *config.Config, log *slog.Logger) {
 	srv := echo.New()
 	srv.GET("/swagger/*any", echoSwagger.WrapHandler)
 

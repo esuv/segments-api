@@ -11,11 +11,12 @@ import (
 )
 
 const configsDir = "configs"
+const migrationsDir = "migrations"
 
 func main() {
 	cfg := config.MustLoad(configsDir).Postgres
 
-	sourceURL := "file://migrations"
+	sourceURL := "file://" + migrationsDir
 	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		cfg.Password,
 		cfg.DatabaseName,
@@ -32,7 +33,7 @@ func main() {
 
 	if err := m.Up(); err != nil {
 		if errors.Is(err, migrate.ErrNoChange) {
-			fmt.Println("there are no changes yet, add some new migration to ./migrations directory")
+			fmt.Printf("there are no changes yet, add some new migration to ./%s directory\n", migrationsDir)
 			return
 		}
 

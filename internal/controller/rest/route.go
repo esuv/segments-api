@@ -36,7 +36,7 @@ type inputCreateSegment struct {
 // @Tags         accounts
 // @Accept       json
 // @Produce      json
-// @Param        id   path      int  true  "Account ID"
+// @Param        id   path      int  true  "Segment ID"
 // @Router       /segments [post]
 func (r SegmentRoute) Create(ctx echo.Context) error {
 	var inp inputCreateSegment
